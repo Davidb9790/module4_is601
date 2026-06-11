@@ -361,4 +361,53 @@ def test_operations_invalid_input_types(calc_method, a, b, expected_exception):
     with pytest.raises(expected_exception):
         calc_method(a, b)
 
+def test_power_positive():
+    """
+    Test the power method with a positive base and a positive exponent.
+    
+    This test verifies that raising a positive base to a positive exponent 
+    returns the correct result.
+    """
+    # Arrange
+    base = 2.0
+    exponent = 2.0
+    expected_result = 4.0  # 2^2 = 4
 
+    # Act
+    result = Operation.power(base, exponent)
+
+    # Assert
+    assert result == expected_result, (
+        f"Expected {base} ** {exponent} to be {expected_result}, got {result}"
+    )
+# -----------------------------------------------------------------------------------
+# Parameterized Tests for Power Method
+# -----------------------------------------------------------------------------------
+@pytest.mark.parametrize(
+    "base, exponent, expected",
+    [
+        (2.0, 3.0, 8.0),    # positive exponent
+        (5.0, 0.0, 1.0),    # zero exponent
+        (2.0, -2.0, .25),   # negative exponent
+        (9.0, 0.5, 3.0),    # fractional exponent (square root)
+        (1.0, 999.0, 1.0),  # 1 to any power
+    ],
+    ids=[
+        "positive_exponent",
+        "zero_exponent",
+        "negative_exponent",
+        "fractional_exponent",
+        "one_to_any_power",
+    ]
+)
+def test_power_parameterized(base, exponent, expected):
+    """Parameterized tests for the power method covering multiple exponentiation scenarios.
+        Ensures correct behavior for positive, zero, negative, and fractional exponents.
+    """
+    # Act
+    result = Operation.power(base, exponent)
+
+    # Assert
+    assert result == expected, (
+        f"Expected {base} ** {exponent}, got {result}"
+    )

@@ -1,4 +1,4 @@
-# tests/test_calculations.py
+# tests/test_calculation.py
 
 """
 Unit tests for the calculator_calculations module using pytest.
@@ -20,6 +20,7 @@ from app.calculation import (
     SubtractCalculation,
     MultiplyCalculation,
     DivideCalculation,
+    PowerCalculation,
     Calculation
 )
 
@@ -341,18 +342,16 @@ def test_factory_register_calculation_duplicate():
     """
     # Arrange & Act
     with pytest.raises(ValueError) as exc_info:
-        @CalculationFactory.register_calculation('add')  # Attempt to register 'add' again
-        class AnotherAddCalculation(Calculation):
+        @CalculationFactory.register_calculation('power')  # Attempt to register 'power' again
+        class AnotherPowerCalculation(Calculation):
             """
-            AnotherAddCalculation attempts to register the 'add' calculation type again.
+            AnotherAddCalculation attempts to register the 'power' calculation type again.
             """
             def execute(self) -> float:
-                return Operation.addition(self.a, self.b)
+                return Operation.power(self.a, self.b)
 
     # Assert
-    assert "Calculation type 'add' is already registered." in str(exc_info.value)
-
-
+    assert "Calculation type 'power' is already registered." in str(exc_info.value)
 # -----------------------------------------------------------------------------------
 # Test String Representations
 # -----------------------------------------------------------------------------------
@@ -496,13 +495,15 @@ def test_calculation_repr_representation_division():
     ('subtract', 10.0, 5.0, 5.0),
     ('multiply', 10.0, 5.0, 50.0),
     ('divide', 10.0, 5.0, 2.0),
+    ('power', 2.0,3.0, 8.0), # Add Power
 ])
 @patch.object(Operation, 'addition')
 @patch.object(Operation, 'subtraction')
 @patch.object(Operation, 'multiplication')
 @patch.object(Operation, 'division')
+@patch.object(Operation, 'power')
 def test_calculation_execute_parameterized(
-    mock_division, mock_multiplication, mock_subtraction, mock_addition,
+    mock_power, mock_division, mock_multiplication, mock_subtraction, mock_addition,
     calc_type, a, b, expected_result
 ):
     """
@@ -520,6 +521,8 @@ def test_calculation_execute_parameterized(
         mock_multiplication.return_value = expected_result
     elif calc_type == 'divide':
         mock_division.return_value = expected_result
+    elif calc_type == 'power': # Add power to elif statement
+        mock_power.return_value = expected_result
 
     # Act: Create calculation instance and execute
     calc = CalculationFactory.create_calculation(calc_type, a, b)
@@ -534,6 +537,8 @@ def test_calculation_execute_parameterized(
         mock_multiplication.assert_called_once_with(a, b)
     elif calc_type == 'divide':
         mock_division.assert_called_once_with(a, b)
+    elif calc_type == 'power': #add Power condition
+        mock_power.assert_called_once_with(a, b)
 
     assert result == expected_result
 
@@ -547,13 +552,15 @@ def test_calculation_execute_parameterized(
     ('subtract', 10.0, 5.0, "SubtractCalculation: 10.0 Subtract 5.0 = 5.0"),
     ('multiply', 10.0, 5.0, "MultiplyCalculation: 10.0 Multiply 5.0 = 50.0"),
     ('divide', 10.0, 5.0, "DivideCalculation: 10.0 Divide 5.0 = 2.0"),
+    ('power', 2.0, 3.0, "PowerCalculation: 2.0 Power 3.0 = 8.0"),
 ])
 @patch.object(Operation, 'addition', return_value=15.0)
 @patch.object(Operation, 'subtraction', return_value=5.0)
 @patch.object(Operation, 'multiplication', return_value=50.0)
 @patch.object(Operation, 'division', return_value=2.0)
+@patch.object(Operation, 'power', return_value=8.0)
 def test_calculation_str_parameterized(
-    mock_division, mock_multiplication, mock_subtraction, mock_addition,
+    mock_power, mock_division, mock_multiplication, mock_subtraction, mock_addition,
     calc_type, a, b, expected_str
 ):
     """
@@ -570,3 +577,10 @@ def test_calculation_str_parameterized(
 
     # Assert: Verify the string representation matches the expected format
     assert calc_str == expected_str
+
+# Added full PowerCalculation support:
+# - Included 'power' in parameterized execute tests
+# - Added string‑representation test case for PowerCalculation
+# - Added Operation.power mocks and assertions
+# This ensures Power behaves consistently with all other calculation types.
+

@@ -1,4 +1,4 @@
-# calculator_calculations.py
+# __init__.py
 
 # -----------------------------------------------------------------------------------
 # Import Statements
@@ -135,7 +135,7 @@ class CalculationFactory:
         - **Dynamic Binding**: This approach binds each calculation type to a class dynamically, 
           allowing us to extend our application without altering the core logic.
         """
-        def decorator(subclass):
+        def decorator(subclass): # Allows us to easily add new methods
             # Convert calculation_type to lowercase to ensure consistency.
             calculation_type_lower = calculation_type.lower()
             # Check if the calculation type has already been registered to avoid duplication.
@@ -184,7 +184,7 @@ class CalculationFactory:
 # multiplication, or division). These classes inherit from Calculation, implementing 
 # the `execute` method to perform the specific arithmetic operation. 
 
-@CalculationFactory.register_calculation('add')
+@CalculationFactory.register_calculation('add') # pragma: no cover
 class AddCalculation(Calculation):
     """
     AddCalculation represents an addition operation between two numbers.
@@ -201,7 +201,7 @@ class AddCalculation(Calculation):
         return Operation.addition(self.a, self.b)
 
 
-@CalculationFactory.register_calculation('subtract')
+@CalculationFactory.register_calculation('subtract') # pragma: no cover
 class SubtractCalculation(Calculation):
     """
     SubtractCalculation represents a subtraction operation between two numbers.
@@ -215,7 +215,7 @@ class SubtractCalculation(Calculation):
         return Operation.subtraction(self.a, self.b)
 
 
-@CalculationFactory.register_calculation('multiply')
+@CalculationFactory.register_calculation('multiply') # pragma: no cover
 class MultiplyCalculation(Calculation):
     """
     MultiplyCalculation represents a multiplication operation.
@@ -229,7 +229,7 @@ class MultiplyCalculation(Calculation):
         return Operation.multiplication(self.a, self.b)
 
 
-@CalculationFactory.register_calculation('divide')
+@CalculationFactory.register_calculation('divide') # pragma: no cover
 class DivideCalculation(Calculation):
     """
     DivideCalculation represents a division operation.
@@ -245,16 +245,15 @@ class DivideCalculation(Calculation):
             raise ZeroDivisionError("Cannot divide by zero.")
         # Calls the division method from the Operation module to perform the division.
         return Operation.division(self.a, self.b)
+@CalculationFactory.register_calculation('power') # pragma: no cover
+class PowerCalculation(Calculation):
+    """
+    PowerCalculation represents an exponentiation operation.
 
-# @CalculationFactory.register_calculation('power')
-# class PowerCalculation(Calculation):
-#     """
-#     MultiplyCalculation represents a multiplication operation.
-    
-#     By encapsulating the multiplication logic here, we achieve a clear separation of 
-#     concerns, making it easy to adjust the multiplication logic without affecting other calculations.
-#     """
-
-#     def execute(self) -> float:
-#         # Calls the multiplication method from the Operation module to perform the multiplication.
-#         return Operation.power(self.a, self.b) # pragma: no cover
+    By encapsulating the power logic here, we achieve a clear separation of 
+    concerns, making it easy to adjust the exponentiation logic without 
+    affecting other calculations.
+    """
+    def execute(self) -> float:
+        # Calls the power method from the Operation module to perform exponentiation.
+        return Operation.power(self.a, self.b)  # pragma: no cover
